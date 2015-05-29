@@ -11,3 +11,7 @@ Works for Linux and Mac OS X.
 ## Why?
 My project 'Bash-adventure' uses ordinary text files with icon metadata as sprites but is unable to store
 them on git.
+
+## How to use
+Convert both scripts in the repo to executables, edit shebang if needed.
+Afterwards, replace these scripts with the appropriate hooks in your local .git/hooks folder.
