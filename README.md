@@ -1,17 +1,23 @@
-# git-xattr-saver-OSX
+# git-xattr-hooks
 
-## What is it?
-Git Hooks designed to store Mac OS X file extended attributes retrived from `xattr`.
+Git Hooks designed to store OS X extended attributes retrieved from `xattr`
+and custom Finder file icons. Allows git to store file custom icons, tags, 
+permissions etc in remote repositories.
 
-Many filesystems store file metadata (icons, tags, permissions etc.) as "extended attributes".
-Sadly Git and other version control systems do not store this information on file. git-xattr-saver solves this problem by providing simple pre-commit and post-merge hooks which cache the xattr information.
+### How does it work?
+The pre-commit hook scans the local repository for extended attributes and 
+custom finder icons using `xattr`. This information is stored in a temporary
+file `.metadata` which is then committed. When merged/pulled/cloned the
+information from `.metadata` is used to updated files.
 
-Works for Linux and Mac OS X.
+### How to use
+```
+chmod +x <path-to-git-xattr-hooks>/*
+cp <path-to-git-xattr-hooks>/* <path-to-local-repo>/.git/hooks/
+```
+Edit shebang line for both executables if needed.
 
-## Why?
-My project 'Bash-adventure' uses ordinary text files with icon metadata as sprites but is unable to store
-them on git.
+### Dependencies
+* Xcode Command Line Tools
 
-## How to use
-Convert both scripts in the repo to executables, edit shebang if needed.
-Afterwards, replace these scripts with the appropriate hooks in your local .git/hooks folder.
+
