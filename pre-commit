@@ -1,5 +1,31 @@
 #!/bin/sh
-# pre-commit hook
-xattr -lrx . > .metadata
-git add -f .metadata
-git commit --allow-empty -m "Added metadata"
+
+# get current directory
+
+mkdir -p xattr_files || exit 1 # store extended attribute files in xattr_files
+: "go over the git repo, storing all xattr values in hex recursively
+   into file metadata
+  "
+
+XATTR_FOLDER=$(pwd)/xattr_files
+
+xattr -lrx . > "$XATTR_FOLDER/metadata"
+: "find all files and folders with a ResourceFork and the resource icns,
+   read the value of every icns resource (rsrc files).
+  "
+touch "$XATTR_FOLDER/rsrc_icon_map"
+
+store_rsrc_pwd () {
+    for f in $(.* *)
+    do
+        # does not work with filenames with spaces
+        if [[ $(xattr $f) == *"com.apple.ResourceFork"* && $(RezDet -l $f) == *"icns"* ]]
+          then
+            # create and store the rsrc file in xattr_files
+            DeRez -only icns $f >> "$XATTR_FOLDER/'$f'.rsrc";
+        fi
+    done
+}
+
+git add -f $XATTR_FOLDER/.
+git commit -m "Added metadata and icons for files."
