@@ -16,9 +16,10 @@ xattr -lrx . > "$XATTR_FOLDER/metadata"
 touch "$XATTR_FOLDER/rsrc_icon_map"
 
 store_rsrc_pwd () {
-    for f in $(.* *)
+    for f in $(.* *) # .* * goes over all files including dotfiles
     do
         # does not work with filenames with spaces
+        # chekc if com.apple.ResourceFork is an extended attribute and icns resource is in the output 
         if [[ $(xattr $f) == *"com.apple.ResourceFork"* && $(RezDet -l $f) == *"icns"* ]]
           then
             # create and store the rsrc file in xattr_files
