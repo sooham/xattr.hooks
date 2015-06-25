@@ -14,7 +14,6 @@ The pre-commit hook, which is executed by `.git` before commits, uses OS X
 `DeRez` utility to decompile the resource forks of all files with the com.apple.ResourceFork
 extended attribute as a resource file on the remote repo. The post-merge hook
 appends this back to the files in order.
-
 ```
 1. DeRez fileWithIconResource -only icns > tempStorage.rsrc
 2. git commit tempStorage.rsrc
@@ -22,9 +21,9 @@ appends this back to the files in order.
 4. Rez tempStorage.rsrc -append -o fileWithIconResource
 5. SetFile -a C fileWithIconResource
 ```
-```
 
 ## How to use
+```
 chmod +x <path-to-git-xattr-hooks>/*
 cp <path-to-git-xattr-hooks>/* <path-to-local-repo>/.git/hooks/
 ```
