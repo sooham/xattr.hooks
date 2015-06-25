@@ -5,18 +5,13 @@ storeIcnsResource () {
     do
         if [[ $(xattr $file) == *"com.apple.ResourceFork"* && $(RezDet -l $file) == *"icns"* ]]
             then
-                echo "eval file $fle"
                 touch $file.rsrc
-                echo "made $file.rsrc"
                 DeRez $file -only icns > $file.rsrc
-                echo "DeRezzed"
                 git add -f $file.rsrc
         fi
     done
 }
 
-echo "Before storeIcnsResource"
 storeIcnsResource
-echo "Finished storeIcnsResource"
 git commit --no-verify -m "Added icon resource files."
 exit 0
