@@ -1,27 +1,27 @@
-#!/usr/local/bin/python
-# post-merge hook
+#!/bin/bash
 
-import re
-import subprocess
+# The pre-commit hook does such that all files with icns resource will be in
+# the same directory as their temporary resource file
+# all we need to do then is iterate over the files with an icns resource
+# and Rez file.rsrc -append -o file
+# and SetFile -a C file
 
-pattern_header = re.compile('([\S]+): ([\S]+):')
-
-with open('.metadata') as metadata:
-    data, file_name, attribute_name = '', None, None
-
-    for line in metadata:
-        header_match = pattern_header.match(line)
-        if header_match and data:
-            # we have reached a new file
-            # store old data and start collecting for new file
-            subprocess.call(["xattr", "-wx", attribute_name, data, file_name])
-            data = ''
-            file_name, attribute_name = header_match.group(1, 2)
-
-        elif header_match:
-            file_name, attribute_name = header_match.group(1, 2)
-        else:
-            # still collecting data for previous file
-            data += line
-
-    subprocess.call(["xattr", "-wx", attribute_name, data, file_name])
+retrieveIcnsResource () {
+    # iterate over all files with find
+    for file in $(find .)
+    do
+        # check if they have a non-empty resource fork and icns resource
+        if [[ $(xattr $file) == *"com.apple.ResourceFork"* && $(RezDet -l $file) == *"icns"* ]]
+            then
+                # compile the icns resource file in the same directory to
+                # file
+                Rez $file.rsrc -append -o $file
+                rm -f $file.rsrc
+                SetFile -a C $file
+        fi
+    done
+}
+retrieveIcnsResource
+git add .
+git commit --no-verify -m "Added icons to files; removed resource files."
+exit 0
