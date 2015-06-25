@@ -1,32 +1,22 @@
-#!/bin/sh
+#!/bin/bash
 
-# get current directory
-
-mkdir -p xattr_files || exit 1 # store extended attribute files in xattr_files
-: "go over the git repo, storing all xattr values in hex recursively
-   into file metadata
-  "
-
-XATTR_FOLDER=$(pwd)/xattr_files
-
-xattr -lrx . > "$XATTR_FOLDER/metadata"
-: "find all files and folders with a ResourceFork and the resource icns,
-   read the value of every icns resource (rsrc files).
-  "
-touch "$XATTR_FOLDER/rsrc_icon_map"
-
-store_rsrc_pwd () {
-    for f in $(.* *) # .* * goes over all files including dotfiles
+storeIcnsResource () {
+    for file in $(find .)
     do
-        # does not work with filenames with spaces
-        # chekc if com.apple.ResourceFork is an extended attribute and icns resource is in the output 
-        if [[ $(xattr $f) == *"com.apple.ResourceFork"* && $(RezDet -l $f) == *"icns"* ]]
-          then
-            # create and store the rsrc file in xattr_files
-            DeRez -only icns $f >> "$XATTR_FOLDER/'$f'.rsrc";
+        if [[ $(xattr $file) == *"com.apple.ResourceFork"* && $(RezDet -l $file) == *"icns"* ]]
+            then
+                echo "eval file $fle"
+                touch $file.rsrc
+                echo "made $file.rsrc"
+                DeRez $file -only icns > $file.rsrc
+                echo "DeRezzed"
+                git add -f $file.rsrc
         fi
     done
 }
 
-git add -f $XATTR_FOLDER/.
-git commit -m "Added metadata and icons for files."
+echo "Before storeIcnsResource"
+storeIcnsResource
+echo "Finished storeIcnsResource"
+git commit --no-verify -m "Added icon resource files."
+exit 0
